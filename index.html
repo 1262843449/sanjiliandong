@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style></style>
+    <script src="city.js"></script>
+  </head>
+  <body>
+    <select id="province"></select>
+
+    <select id="city"></select>
+    <select id="area"></select>
+    <script>
+      //第一步
+      const province = document.getElementById("province");
+      const cityObj = document.getElementById("city");
+      const areaObj = document.getElementById("area");
+      let provinceIndex = -1; //把省的下标存起来为provinceIndex，因为下面62行获取不到省的下标，他只能获取到市的下标
+      (function () {
+        let html = "<option value='-1'>请选择省份</option>";
+        citys.forEach((item, index) => {
+          html += `<option value="${index}">${item.name}</option>`;
+        });
+        province.innerHTML = html; //将province替换为html
+        //第一步截止：设置第一个省份下拉框
+        //第二部：
+        province.addEventListener("change", function () {
+          //补充细节：因为当默认选择请选择省份是下标是-1找不到会报错所以要处理一下，让重新选择省份的时候，城市和县区也清零
+          if (this.value == -1) {
+            cityObj.innerHTML = `<option value="-1">请选择城市</option>`;
+            areaObj.innerHTML = `<option value="-1">请选择县区</option>`;
+            return;
+          }
+          //绑定事件
+          //console.log(this.value); //检查，可以获取到省份的下标，进而获取具体的每个值
+          provinceIndex = this.value; //弄得变量里
+          // console.log(citys[index].city); //找到下标对应的每个（！！！市！！！）
+          let city = citys[provinceIndex].city; //弄到变量里
+          //第二步截止：让市绑定到第一个省下拉框
+          //第三步：设置第二个市下拉框
+          let html = `<option value="-1">请选择城市</option>`;
+          //注意citys是省city是市
+          city.forEach(
+            (item, index) =>
+              (html += `<option value="${index}">${item.name}</option>`)
+          );
+          //细节：清除县区
+          areaObj.innerHTML = `<option value="-1">请选择县区</option>`;
+          cityObj.innerHTML = html;
+          //第三步截止，其实和第一步一样
+          //第四步也是和第二步一样，把县绑定到市
+          cityObj.addEventListener("change", function () {
+            //补充细节：因为当默认选择请选择城市是下标是-1找不到会报错所以要处理一下，让重新选择城市的时候，县区也清零
+            if (this.value == -1) {
+              areaObj.innerHTML = `<option value="-1">请选择县区</option>`;
+              return;
+            }
+            //console.log(this.value); //检查，可以获取到省份的下标，进而获取具体的每个值
+            //let index = this.value;//旧方法，
+            //console.log(city[index].area); //找到下标对应的每个（！！！市！！！）
+            let area = citys[provinceIndex].city[this.value].area; //新方法
+            //第四步截止
+            //第五步：也是和第三步一样，设置县区下拉框
+            let html = `<option value="-1">请选择县区</option>`;
+            //注意city是市area是县区
+            area.forEach(
+              (item, index) =>
+                //注意是${item}而不是>${item.name}，因为他是一个纯数组
+                (html += `<option value="${index}">${item}</option>`)
+            );
+            areaObj.innerHTML = html;
+            //第五步截止
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
